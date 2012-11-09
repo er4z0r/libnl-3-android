@@ -76,7 +76,6 @@ LOCAL_C_INCLUDES := $(GLOBAL_INCLUDES)
 
 include $(BUILD_SHARED_LIBRARY)
 
-
 #
 # nl-genl-3
 #
@@ -85,6 +84,8 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := nl-genl-3
 LOCAL_SRC_FILES := \
 	$(call list-all,$(LOCAL_PATH),genl/*.c)
+
+$(info Value of LOCAL_SRC_FILES is '$(LOCAL_SRC_FILES)')
 
 LOCAL_CFLAGS := $(GLOBAL_CFLAGS)
 LOCAL_C_INCLUDES := $(GLOBAL_INCLUDES)
@@ -100,6 +101,8 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := nl-nf-3
 LOCAL_SRC_FILES := \
 	$(call list-all,$(LOCAL_PATH),netfilter/*.c)
+
+$(info Value of LOCAL_SRC_FILES is '$(LOCAL_SRC_FILES)')
 
 LOCAL_CFLAGS := $(GLOBAL_CFLAGS)
 LOCAL_C_INCLUDES := $(GLOBAL_INCLUDES)
@@ -122,10 +125,10 @@ LOCAL_SRC_FILES := \
 
 $(info Value of LOCAL_SRC_FILES is '$(LOCAL_SRC_FILES)')
 
-
 LOCAL_CFLAGS := $(GLOBAL_CFLAGS)
 LOCAL_C_INCLUDES := $(GLOBAL_INCLUDES)
 LOCAL_SHARED_LIBRARIES := nl-3
-LOCAL_LDLIBS := -L$(abspath $(LIBS_PATH))/$(TARGET_ARCH_ABI) -lnl-3
+# not needed?:
+#LOCAL_LDLIBS := -L$(abspath $(LIBS_PATH))/$(TARGET_ARCH_ABI) -lnl-3
 
 include $(BUILD_SHARED_LIBRARY)
