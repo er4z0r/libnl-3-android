@@ -28,25 +28,20 @@ make-subdirs-list-with-suffix = $(addsuffix $2, $(sort $(dir $(wildcard $1/**/))
 # -----------------------------------------------------------------------------
 list-all = $(subst $1, ., $(wildcard $(foreach ext,$2,$(call make-subdirs-list-with-suffix,$1,$(ext)))))
 
-
 #
-# Generate header
+# Generate headers
 #
-$(info $(shell (cd $(NL_LIB_PATH); lex --header-file=route/pktloc_grammar.h -o route/pktloc_grammar.c route/pktloc_grammar.l)))
-
-$(info $(shell (cd $(NL_LIB_PATH); yacc -d -o route/pktloc_syntax.c route/pktloc_syntax.y)))
-
-$(info $(shell (cd $(NL_LIB_PATH); lex --header-file=route/cls/ematch_grammar.h -o route/cls/ematch_grammar.c route/cls/ematch_grammar.l)))
-
-$(info $(shell (cd $(NL_LIB_PATH); yacc -d -o route/cls/ematch_syntax.c route/cls/ematch_syntax.y)))
-
+$(info generating pktloc_grammar: $(shell (cd $(NL_LIB_PATH); lex --header-file=route/pktloc_grammar.h -o route/pktloc_grammar.c route/pktloc_grammar.l)))
+$(info generating pktloc_syntax: $(shell (cd $(NL_LIB_PATH); yacc -d -o route/pktloc_syntax.c route/pktloc_syntax.y)))
+$(info generating ematch_grammar: $(shell (cd $(NL_LIB_PATH); lex --header-file=route/cls/ematch_grammar.h -o route/cls/ematch_grammar.c route/cls/ematch_grammar.l)))
+$(info generating ematch_syntax: $(shell (cd $(NL_LIB_PATH); yacc -d -o route/cls/ematch_syntax.c route/cls/ematch_syntax.y)))
 
 #
 # Define includes for all modules
 #
 # Android NDK misses some includes. They are copied from https://github.com/android/kernel_common/tree/android-3.4/include/
 # TODO: search.h is too new!!! https://github.com/android/platform_bionic/blob/master/libc/include/search.h
-GLOBAL_INCLUDES := \
+MY_INCLUDES := \
 	$(JNI_PATH)/missing_include \
 	$(JNI_PATH)/generated_include \
 	$(MAIN_PATH)/include \
@@ -54,9 +49,9 @@ GLOBAL_INCLUDES := \
 	$(NL_LIB_PATH)/route \
 	$(NL_LIB_PATH)/route/cls
 
-GLOBAL_CFLAGS := -DSYSCONFDIR=\"$(sysconfdir)/libnl\"
+MY_CFLAGS := -DSYSCONFDIR=\"$(sysconfdir)/libnl\"
 
-$(info Value of GLOBAL_INCLUDES is '$(GLOBAL_INCLUDES)')
+$(info Value of MY_INCLUDES is '$(MY_INCLUDES)')
 
 #
 # nl-3
@@ -71,8 +66,8 @@ LOCAL_SRC_FILES = \
 	error.c handlers.c msg.c nl.c object.c socket.c utils.c \
 	version.c
 
-LOCAL_CFLAGS := $(GLOBAL_CFLAGS)
-LOCAL_C_INCLUDES := $(GLOBAL_INCLUDES)
+LOCAL_CFLAGS := $(MY_CFLAGS)
+LOCAL_C_INCLUDES := $(MY_INCLUDES)
 
 include $(BUILD_SHARED_LIBRARY)
 
@@ -87,8 +82,8 @@ LOCAL_SRC_FILES := \
 
 $(info Value of LOCAL_SRC_FILES is '$(LOCAL_SRC_FILES)')
 
-LOCAL_CFLAGS := $(GLOBAL_CFLAGS)
-LOCAL_C_INCLUDES := $(GLOBAL_INCLUDES)
+LOCAL_CFLAGS := $(MY_CFLAGS)
+LOCAL_C_INCLUDES := $(MY_INCLUDES)
 LOCAL_SHARED_LIBRARIES = nl-3
 
 include $(BUILD_SHARED_LIBRARY)
@@ -104,8 +99,8 @@ LOCAL_SRC_FILES := \
 
 $(info Value of LOCAL_SRC_FILES is '$(LOCAL_SRC_FILES)')
 
-LOCAL_CFLAGS := $(GLOBAL_CFLAGS)
-LOCAL_C_INCLUDES := $(GLOBAL_INCLUDES)
+LOCAL_CFLAGS := $(MY_CFLAGS)
+LOCAL_C_INCLUDES := $(MY_INCLUDES)
 LOCAL_SHARED_LIBRARIES = nl-3
 
 include $(BUILD_SHARED_LIBRARY)
@@ -125,10 +120,8 @@ LOCAL_SRC_FILES := \
 
 $(info Value of LOCAL_SRC_FILES is '$(LOCAL_SRC_FILES)')
 
-LOCAL_CFLAGS := $(GLOBAL_CFLAGS)
-LOCAL_C_INCLUDES := $(GLOBAL_INCLUDES)
+LOCAL_CFLAGS := $(MY_CFLAGS)
+LOCAL_C_INCLUDES := $(MY_INCLUDES)
 LOCAL_SHARED_LIBRARIES := nl-3
-# not needed?:
-#LOCAL_LDLIBS := -L$(abspath $(LIBS_PATH))/$(TARGET_ARCH_ABI) -lnl-3
 
 include $(BUILD_SHARED_LIBRARY)

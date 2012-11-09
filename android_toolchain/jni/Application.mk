@@ -1,5 +1,3 @@
-LOCAL_PATH := $(call my-dir)
-
 # Optimizations
 #APP_OPTIM := release
 APP_OPTIM := debug
