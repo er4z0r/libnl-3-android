@@ -1,6 +1,5 @@
 LOCAL_PATH := $(call my-dir)
 JNI_PATH := $(LOCAL_PATH)
-LIBS_PATH := $(LOCAL_PATH)/../libs
 MAIN_PATH := $(LOCAL_PATH)/../..
 NL_LIB_PATH := $(MAIN_PATH)/lib
 
@@ -28,8 +27,15 @@ make-subdirs-list-with-suffix = $(addsuffix $2, $(sort $(dir $(wildcard $1/**/))
 # -----------------------------------------------------------------------------
 list-all = $(subst $1, ., $(wildcard $(foreach ext,$2,$(call make-subdirs-list-with-suffix,$1,$(ext)))))
 
+
 #
-# Generate headers
+# Include System V search as static library
+# Files are copied from https://github.com/android/platform_bionic/commit/21eab513e7eec280a7a8bcb9482a1a8b61e59442
+#
+-include $(LOCAL_PATH)/system-v-search/Android.mk
+
+#
+# Generate parser
 #
 $(info generating pktloc_grammar: $(shell (cd $(NL_LIB_PATH); lex --header-file=route/pktloc_grammar.h -o route/pktloc_grammar.c route/pktloc_grammar.l)))
 $(info generating pktloc_syntax: $(shell (cd $(NL_LIB_PATH); yacc -d -o route/pktloc_syntax.c route/pktloc_syntax.y)))
@@ -40,7 +46,6 @@ $(info generating ematch_syntax: $(shell (cd $(NL_LIB_PATH); yacc -d -o route/cl
 # Define includes for all modules
 #
 # Android NDK misses some includes. They are copied from https://github.com/android/kernel_common/tree/android-3.4/include/
-# TODO: search.h is too new!!! https://github.com/android/platform_bionic/blob/master/libc/include/search.h
 MY_INCLUDES := \
 	$(JNI_PATH)/missing_include \
 	$(JNI_PATH)/generated_include \
@@ -49,7 +54,8 @@ MY_INCLUDES := \
 	$(NL_LIB_PATH)/route \
 	$(NL_LIB_PATH)/route/cls
 
-MY_CFLAGS := -DSYSCONFDIR=\"$(sysconfdir)/libnl\"
+MY_CFLAGS := \
+	-DSYSCONFDIR=\"$(sysconfdir)/libnl\"
 
 $(info Value of MY_INCLUDES is '$(MY_INCLUDES)')
 
@@ -68,6 +74,9 @@ LOCAL_SRC_FILES = \
 
 LOCAL_CFLAGS := $(MY_CFLAGS)
 LOCAL_C_INCLUDES := $(MY_INCLUDES)
+# other modules depending of nl-3 will get these exports:
+LOCAL_EXPORT_CFLAGS := $(MY_CFLAGS)
+LOCAL_EXPORT_C_INCLUDES := $(MY_INCLUDES)
 
 include $(BUILD_SHARED_LIBRARY)
 
@@ -82,8 +91,6 @@ LOCAL_SRC_FILES := \
 
 $(info Value of LOCAL_SRC_FILES is '$(LOCAL_SRC_FILES)')
 
-LOCAL_CFLAGS := $(MY_CFLAGS)
-LOCAL_C_INCLUDES := $(MY_INCLUDES)
 LOCAL_SHARED_LIBRARIES = nl-3
 
 include $(BUILD_SHARED_LIBRARY)
@@ -99,8 +106,6 @@ LOCAL_SRC_FILES := \
 
 $(info Value of LOCAL_SRC_FILES is '$(LOCAL_SRC_FILES)')
 
-LOCAL_CFLAGS := $(MY_CFLAGS)
-LOCAL_C_INCLUDES := $(MY_INCLUDES)
 LOCAL_SHARED_LIBRARIES = nl-3
 
 include $(BUILD_SHARED_LIBRARY)
@@ -114,14 +119,14 @@ LOCAL_MODULE := nl-route-3
 LOCAL_SRC_FILES := \
 	$(call list-all,$(LOCAL_PATH),route/*.c) \
 	$(call list-all,$(LOCAL_PATH),route/cls/*.c) \
+	$(call list-all,$(LOCAL_PATH),route/cls/ematch/*.c) \
 	$(call list-all,$(LOCAL_PATH),route/link/*.c) \
 	$(call list-all,$(LOCAL_PATH),route/qdisc/*.c) \
 	$(call list-all,$(LOCAL_PATH),route/fib_lookup/*.c)
 
 $(info Value of LOCAL_SRC_FILES is '$(LOCAL_SRC_FILES)')
 
-LOCAL_CFLAGS := $(MY_CFLAGS)
-LOCAL_C_INCLUDES := $(MY_INCLUDES)
+LOCAL_STATIC_LIBRARIES := system-v-search
 LOCAL_SHARED_LIBRARIES := nl-3
 
 include $(BUILD_SHARED_LIBRARY)
