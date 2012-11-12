@@ -817,6 +817,7 @@ int rtnl_netem_get_delay_distribution(struct rtnl_qdisc *qdisc, int16_t **dist_p
 #ifdef ANDROID
 /**
  * Androids bionic c lib has no getline
+ * Code copied from busybox's libbb
  */
 ssize_t getline(char **lineptr, size_t *n, FILE *stream) {
 	int ch;
