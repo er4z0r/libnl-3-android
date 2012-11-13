@@ -1,7 +1,7 @@
 LOCAL_PATH := $(call my-dir)
-JNI_PATH := $(LOCAL_PATH)
-MAIN_PATH := $(LOCAL_PATH)/../..
-NL_LIB_PATH := $(MAIN_PATH)/lib
+NL_JNI_PATH := $(LOCAL_PATH)
+NL_MAIN_PATH := $(LOCAL_PATH)/../..
+NL_LIB_PATH := $(NL_MAIN_PATH)/lib
 
 # -----------------------------------------------------------------------------
 # Creates subdirs list from given root (root is included) and append given
@@ -52,22 +52,22 @@ LOCAL_SRC_FILES = \
 	version.c
 
 # Android NDK misses some includes. They are copied from https://github.com/android/kernel_common/tree/android-3.4/include/
-MY_INCLUDES := \
-	$(JNI_PATH)/missing_include \
-	$(JNI_PATH)/generated_include \
-	$(MAIN_PATH)/include \
+NL_MY_INCLUDES := \
+	$(NL_JNI_PATH)/missing_include \
+	$(NL_JNI_PATH)/generated_include \
+	$(NL_MAIN_PATH)/include \
 	$(NL_LIB_PATH) \
 	$(NL_LIB_PATH)/route \
 	$(NL_LIB_PATH)/route/cls
 
-MY_CFLAGS := \
+NL_MY_CFLAGS := \
 	-DSYSCONFDIR=\"$(sysconfdir)/libnl\"
 
-LOCAL_CFLAGS := $(MY_CFLAGS)
-LOCAL_C_INCLUDES := $(MY_INCLUDES)
+LOCAL_C_INCLUDES := $(NL_MY_INCLUDES)
+LOCAL_CFLAGS := $(NL_MY_CFLAGS)
 # other modules depending on nl-3 will get these cflags and includes:
-LOCAL_EXPORT_CFLAGS := $(MY_CFLAGS)
-LOCAL_EXPORT_C_INCLUDES := $(MY_INCLUDES)
+LOCAL_EXPORT_C_INCLUDES := $(NL_MY_INCLUDES)
+LOCAL_EXPORT_CFLAGS := $(NL_MY_CFLAGS)
 
 include $(BUILD_STATIC_LIBRARY)
 
