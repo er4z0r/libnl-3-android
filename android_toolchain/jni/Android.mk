@@ -3,10 +3,6 @@ JNI_PATH := $(LOCAL_PATH)
 MAIN_PATH := $(LOCAL_PATH)/../..
 NL_LIB_PATH := $(MAIN_PATH)/lib
 
-$(info Value of LOCAL_PATH is '$(LOCAL_PATH)')
-$(info Value of MAIN_PATH is '$(MAIN_PATH)')
-$(info Value of NL_LIB_PATH is '$(NL_LIB_PATH)')
-
 # -----------------------------------------------------------------------------
 # Creates subdirs list from given root (root is included) and append given
 # suffix to each element 
@@ -32,32 +28,15 @@ list-all = $(subst $1, ., $(wildcard $(foreach ext,$2,$(call make-subdirs-list-w
 # Include System V search as static library
 # Files are copied from https://github.com/android/platform_bionic/commit/21eab513e7eec280a7a8bcb9482a1a8b61e59442
 #
--include $(LOCAL_PATH)/system-v-search/Android.mk
+include $(call all-subdir-makefiles)
 
 #
 # Generate parser
 #
-$(info generating pktloc_grammar: $(shell (cd $(NL_LIB_PATH); lex --header-file=route/pktloc_grammar.h -o route/pktloc_grammar.c route/pktloc_grammar.l)))
-$(info generating pktloc_syntax: $(shell (cd $(NL_LIB_PATH); yacc -d -o route/pktloc_syntax.c route/pktloc_syntax.y)))
-$(info generating ematch_grammar: $(shell (cd $(NL_LIB_PATH); lex --header-file=route/cls/ematch_grammar.h -o route/cls/ematch_grammar.c route/cls/ematch_grammar.l)))
-$(info generating ematch_syntax: $(shell (cd $(NL_LIB_PATH); yacc -d -o route/cls/ematch_syntax.c route/cls/ematch_syntax.y)))
-
-#
-# Define includes for all modules
-#
-# Android NDK misses some includes. They are copied from https://github.com/android/kernel_common/tree/android-3.4/include/
-MY_INCLUDES := \
-	$(JNI_PATH)/missing_include \
-	$(JNI_PATH)/generated_include \
-	$(MAIN_PATH)/include \
-	$(NL_LIB_PATH) \
-	$(NL_LIB_PATH)/route \
-	$(NL_LIB_PATH)/route/cls
-
-MY_CFLAGS := \
-	-DSYSCONFDIR=\"$(sysconfdir)/libnl\"
-
-$(info Value of MY_INCLUDES is '$(MY_INCLUDES)')
+$(info nl-3: generating pktloc_grammar... $(shell (cd $(NL_LIB_PATH); lex --header-file=route/pktloc_grammar.h -o route/pktloc_grammar.c route/pktloc_grammar.l)))
+$(info nl-3: generating pktloc_syntax... $(shell (cd $(NL_LIB_PATH); yacc -d -o route/pktloc_syntax.c route/pktloc_syntax.y)))
+$(info nl-3: generating ematch_grammar... $(shell (cd $(NL_LIB_PATH); lex --header-file=route/cls/ematch_grammar.h -o route/cls/ematch_grammar.c route/cls/ematch_grammar.l)))
+$(info nl-3: generating ematch_syntax... $(shell (cd $(NL_LIB_PATH); yacc -d -o route/cls/ematch_syntax.c route/cls/ematch_syntax.y)))
 
 #
 # nl-3
@@ -72,9 +51,21 @@ LOCAL_SRC_FILES = \
 	error.c handlers.c msg.c nl.c object.c socket.c utils.c \
 	version.c
 
+# Android NDK misses some includes. They are copied from https://github.com/android/kernel_common/tree/android-3.4/include/
+MY_INCLUDES := \
+	$(JNI_PATH)/missing_include \
+	$(JNI_PATH)/generated_include \
+	$(MAIN_PATH)/include \
+	$(NL_LIB_PATH) \
+	$(NL_LIB_PATH)/route \
+	$(NL_LIB_PATH)/route/cls
+
+MY_CFLAGS := \
+	-DSYSCONFDIR=\"$(sysconfdir)/libnl\"
+
 LOCAL_CFLAGS := $(MY_CFLAGS)
 LOCAL_C_INCLUDES := $(MY_INCLUDES)
-# other modules depending of nl-3 will get these exports:
+# other modules depending on nl-3 will get these cflags and includes:
 LOCAL_EXPORT_CFLAGS := $(MY_CFLAGS)
 LOCAL_EXPORT_C_INCLUDES := $(MY_INCLUDES)
 
@@ -89,9 +80,9 @@ LOCAL_MODULE := nl-genl-3
 LOCAL_SRC_FILES := \
 	$(call list-all,$(LOCAL_PATH),genl/*.c)
 
-$(info Value of LOCAL_SRC_FILES is '$(LOCAL_SRC_FILES)')
+#$(info Value of LOCAL_SRC_FILES is '$(LOCAL_SRC_FILES)')
 
-LOCAL_SHARED_LIBRARIES = nl-3
+LOCAL_SHARED_LIBRARIES := nl-3
 
 include $(BUILD_SHARED_LIBRARY)
 
@@ -104,9 +95,9 @@ LOCAL_MODULE := nl-nf-3
 LOCAL_SRC_FILES := \
 	$(call list-all,$(LOCAL_PATH),netfilter/*.c)
 
-$(info Value of LOCAL_SRC_FILES is '$(LOCAL_SRC_FILES)')
+#$(info Value of LOCAL_SRC_FILES is '$(LOCAL_SRC_FILES)')
 
-LOCAL_SHARED_LIBRARIES = nl-3
+LOCAL_SHARED_LIBRARIES := nl-3
 
 include $(BUILD_SHARED_LIBRARY)
 
@@ -124,7 +115,7 @@ LOCAL_SRC_FILES := \
 	$(call list-all,$(LOCAL_PATH),route/qdisc/*.c) \
 	$(call list-all,$(LOCAL_PATH),route/fib_lookup/*.c)
 
-$(info Value of LOCAL_SRC_FILES is '$(LOCAL_SRC_FILES)')
+#$(info Value of LOCAL_SRC_FILES is '$(LOCAL_SRC_FILES)')
 
 LOCAL_WHOLE_STATIC_LIBRARIES := system-v-search
 LOCAL_SHARED_LIBRARIES := nl-3
