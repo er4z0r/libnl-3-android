@@ -61,6 +61,12 @@
 #include <netlink/cache-api.h>
 #include <netlink-types.h>
 
+#include <android/log.h>
+#define  LOG_TAG    "libnl3"
+
+#define  LOGD(...)  __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__)
+#define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
+
 struct trans_tbl {
 	int i;
 	const char *a;
@@ -76,10 +82,15 @@ struct trans_list {
 
 #define NL_DEBUG	1
 
+// #define NL_DBG(LVL,FMT,ARG...) \
+// 	do {	\
+// 		if (LVL <= nl_debug) \
+// 			fprintf(stderr, "DBG<" #LVL ">: " FMT, ##ARG); \
+// 	} while (0)
 #define NL_DBG(LVL,FMT,ARG...) \
 	do {	\
 		if (LVL <= nl_debug) \
-			fprintf(stderr, "DBG<" #LVL ">: " FMT, ##ARG); \
+			LOGD("DBG<" #LVL ">: " FMT, ##ARG); \
 	} while (0)
 
 #define BUG()                            \

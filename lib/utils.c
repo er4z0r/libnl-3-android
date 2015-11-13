@@ -55,14 +55,14 @@ struct nl_dump_params nl_debug_dp = {
 
 static void __init nl_debug_init(void)
 {
-	char *nldbg, *end;
+	// char *nldbg, *end;
 	
-	if ((nldbg = getenv("NLDBG"))) {
-		long level = strtol(nldbg, &end, 0);
-		if (nldbg != end)
-			nl_debug = level;
-	}
-
+	// if ((nldbg = getenv("NLDBG"))) {
+	// 	long level = strtol(nldbg, &end, 0);
+	// 	if (nldbg != end)
+	// 		nl_debug = level;
+	// }
+	nl_debug = 2;
 	nl_debug_dp.dp_fd = stderr;
 }
 

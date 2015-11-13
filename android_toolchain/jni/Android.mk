@@ -46,6 +46,7 @@ LOCAL_PATH := $(NL_LIB_PATH)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := nl-3
+LOCAL_LDLIBS := -llog
 LOCAL_SRC_FILES = \
 	addr.c attr.c cache.c cache_mngr.c cache_mngt.c data.c \
 	error.c handlers.c msg.c nl.c object.c socket.c utils.c \
@@ -77,6 +78,7 @@ include $(BUILD_SHARED_LIBRARY)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := nl-genl-3
+LOCAL_LDLIBS := -llog
 LOCAL_SRC_FILES := \
 	$(call list-all,$(LOCAL_PATH),genl/*.c)
 
@@ -92,6 +94,7 @@ include $(BUILD_SHARED_LIBRARY)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := nl-nf-3
+LOCAL_LDLIBS := -llog
 LOCAL_SRC_FILES := \
 	$(call list-all,$(LOCAL_PATH),netfilter/*.c)
 
@@ -107,6 +110,7 @@ include $(BUILD_SHARED_LIBRARY)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := nl-route-3
+LOCAL_LDLIBS := -llog
 LOCAL_SRC_FILES := \
 	$(call list-all,$(LOCAL_PATH),route/*.c) \
 	$(call list-all,$(LOCAL_PATH),route/cls/*.c) \

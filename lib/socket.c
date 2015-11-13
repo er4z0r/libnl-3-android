@@ -46,7 +46,7 @@ static void __init init_default_cb(void)
 {
 	char *nlcb;
 
-	if ((nlcb = getenv("NLCB"))) {
+	if ((nlcb = "debug")) {
 		if (!strcasecmp(nlcb, "default"))
 			default_cb = NL_CB_DEFAULT;
 		else if (!strcasecmp(nlcb, "verbose"))
